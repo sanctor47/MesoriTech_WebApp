@@ -37,9 +37,6 @@ function App() {
             <Route path="/devices/:id" element={<Device />} />
             <Route exact path="/plants" element={<Plants />} />
             <Route path="/plants/:id" element={<Plant />} />
-            {/* <Route exact path="/feilds" element={<Feilds />} /> */}
-            {/* <Route exact path="/prizes" element={<RankingPage />} /> */}
-            {/* <Route exact path="/scan" element={<ScanPage />} /> */}
           </Route>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
