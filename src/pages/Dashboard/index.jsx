@@ -1,7 +1,9 @@
 import styled from "styled-components";
+import ChartCard from "../../components/ChartCard";
 import Layout from "../../components/Layout";
 import LineChartEx from "../../components/LineChartEx";
 import { v } from "../../styles/variables";
+// import ChartCard as CChartCard from "../../components/ChartCard";
 
 const Dashboard = () => {
   return (
@@ -17,25 +19,33 @@ const Dashboard = () => {
               <option value="feild-04">feild-04</option>
             </select>
           </StyledSelect>
+
+          <label htmlFor="res">From: </label>
+          <StyledSelect>
+            <select name="feild" id="feild">
+              <option value="feild-01">Per Hour</option>
+              <option value="feild-02">Per Day</option>
+              <option value="feild-03">Per Week</option>
+              <option value="feild-04">Per Month</option>
+            </select>
+          </StyledSelect>
+          <label htmlFor="res">To: </label>
+          <StyledSelect>
+            <select name="feild" id="feild">
+              <option value="feild-01">Per Hour</option>
+              <option value="feild-02">Per Day</option>
+              <option value="feild-03">Per Week</option>
+              <option value="feild-04">Per Month</option>
+            </select>
+          </StyledSelect>
         </div>
       </ActionBar>
+      <FeildCard />
       <GridArea>
         <div className="col-lg">
-          <ChartCard>
-            <div className="chartArea">
-              <div className="title">Percpeation</div>
-              <StyledSelect>
-                <select name="feild" id="feild">
-                  <option value="feild-01">Per Hour</option>
-                  <option value="feild-02">Per Day</option>
-                  <option value="feild-03">Per Week</option>
-                  <option value="feild-04">Per Month</option>
-                </select>
-              </StyledSelect>
-              <LineChartEx />
-            </div>
-            <StatCard />
-          </ChartCard>
+          <ChartCard />
+          <ChartCard />
+          <ChartCard />
         </div>
         <div className="col-sm">
           <StatCard />
@@ -50,6 +60,74 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+const FeildCard = () => {
+  return (
+    <SFeildCard>
+      <div className="left">
+        <div className="header">
+          <div className="name">Feild 01</div>
+          <a href="#">Edit Information</a>
+        </div>
+        <div className="labe">Expermantal Feild</div>
+        <div className="owner">Aser Nabil | Dina Farms</div>
+        <div className="createdAt">2022/2/3 - 04:12:33</div>
+        <div className="sensors">5/7 Active Sesnors</div>
+        <div className="production">No Current Productions</div>
+      </div>
+      <div className="mid"></div>
+      <div className="right"></div>
+    </SFeildCard>
+  );
+};
+
+const SFeildCard = styled.div`
+  background: ${({ theme }) => theme.bg};
+  padding: ${v.smSpacing};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  .left {
+    width: 360px;
+    display: flex;
+    justify-content: space-between;
+    /* align-items: center; */
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: ${v.smSpacing};
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      .name {
+        font-size: 1.8rem;
+        display: flex;
+        /* justify-content: flex-end; */
+      }
+    }
+    .label {
+      font-size: 1.6rem;
+    }
+    .owner {
+      font-size: 1.4rem;
+    }
+    .sensors {
+      font-size: 1.2rem;
+    }
+    .production {
+      font-size: 1.2rem;
+    }
+    .date {
+      font-size: 1rem;
+    }
+  }
+  .mid {
+  }
+  .right {
+  }
+`;
 
 const GridArea = styled.div`
   display: flex;
@@ -67,23 +145,11 @@ const GridArea = styled.div`
     flex-direction: column;
     gap: 1rem;
     /* width: 100%; */
-    flex: 3;
+    flex: 5;
   }
 `;
 
-const ChartCard = styled.div`
-  /* flex: 3; */
-  /* max-height: 400px; */
-  display: flex;
-  background: ${({ theme }) => theme.bg};
-  padding: ${v.lgSpacing};
-  .chartArea{
-    width: 600px;
-  }
-  .statArea{
 
-  }
-`;
 
 const ActionBar = styled.div`
   background: ${({ theme }) => theme.bg};
@@ -110,6 +176,9 @@ const StyledSelect = styled.div`
   background: ${({ theme }) => theme.bgAlpha};
   border: 1px solid ${({ theme }) => theme.bg3};
   border-radius: ${v.borderRadius};
+  display: flex;
+  justify-content: center;
+  align-items: center;
   select {
     padding: ${v.smSpacing} ${v.smSpacing};
     font-family: inherit;
@@ -151,12 +220,13 @@ const StatCard = () => {
 };
 
 const SStatCard = styled.div`
-  /* position: relative; */
   flex: 1;
-  max-height: 200px;
+  max-height: auto;
+  min-width: 120px;
+  max-width: 200px;
+  width: 100%;
   /* border: 1px solid black; */
   background: ${({ theme }) => theme.bg};
-  /* padding: ${v.lgSpacing}; */
   padding: ${v.smSpacing};
   display: flex;
   flex-direction: column;

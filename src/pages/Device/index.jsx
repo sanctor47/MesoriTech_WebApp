@@ -5,7 +5,8 @@ import { v } from "../../styles/variables";
 import { MdRouter } from "react-icons/md";
 import { RiRouterLine } from "react-icons/ri";
 import mapEx from "../../assets/mapEx.png";
-import LineChartEx from "../../components/LineChartEx";
+import ChartCard from "../../components/ChartCard";
+// import LineChartEx from "../../components/LineChartEx";
 
 const DeviceData = {
   name: "Soil Sensor 01",
@@ -68,9 +69,10 @@ const Device = () => {
           </StatusCard>
         </Row>
         <ReadingArea data={DeviceData} />
-        <ChartCard>
+        {/* <ChartCard>
           <LineChartEx />
-        </ChartCard>
+        </ChartCard> */}
+        <ChartCard />
       </Container>
     </Layout>
   );
@@ -78,11 +80,11 @@ const Device = () => {
 
 export default Device;
 
-const ChartCard = styled.div`
-  max-height: 400px;
-  background: ${({ theme }) => theme.bg};
-  padding: ${v.lgSpacing};
-`;
+// const ChartCard = styled.div`
+//   max-height: 400px;
+//   background: ${({ theme }) => theme.bg};
+//   padding: ${v.lgSpacing};
+// `;
 
 const BateryCard = styled.div`
   background: ${({ theme }) => theme.bg};
