@@ -69,8 +69,7 @@ const Device = () => {
         </Row>
         <ReadingArea data={DeviceData} />
         <ChartCard>
-        <LineChartEx />
-
+          <LineChartEx />
         </ChartCard>
       </Container>
     </Layout>
@@ -80,10 +79,10 @@ const Device = () => {
 export default Device;
 
 const ChartCard = styled.div`
-   max-height: 400px;
+  max-height: 400px;
   background: ${({ theme }) => theme.bg};
   padding: ${v.lgSpacing};
-`
+`;
 
 const BateryCard = styled.div`
   background: ${({ theme }) => theme.bg};
@@ -107,7 +106,6 @@ const BateryCard = styled.div`
   .date {
     font-size: 1.2rem;
   }
-
 `;
 const StatusCard = styled.div`
   background: ${({ theme }) => theme.bg};
@@ -130,7 +128,6 @@ const StatusCard = styled.div`
   .date {
     font-size: 1.2rem;
   }
-
 `;
 
 const Container = styled.div`

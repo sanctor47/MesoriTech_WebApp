@@ -22,16 +22,19 @@ const Dashboard = () => {
       <GridArea>
         <div className="col-lg">
           <ChartCard>
-            <div className="title">Percpeation</div>
-            <StyledSelect>
-              <select name="feild" id="feild">
-                <option value="feild-01">Per Hour</option>
-                <option value="feild-02">Per Day</option>
-                <option value="feild-03">Per Week</option>
-                <option value="feild-04">Per Month</option>
-              </select>
-            </StyledSelect>
-            <LineChartEx />
+            <div className="chartArea">
+              <div className="title">Percpeation</div>
+              <StyledSelect>
+                <select name="feild" id="feild">
+                  <option value="feild-01">Per Hour</option>
+                  <option value="feild-02">Per Day</option>
+                  <option value="feild-03">Per Week</option>
+                  <option value="feild-04">Per Month</option>
+                </select>
+              </StyledSelect>
+              <LineChartEx />
+            </div>
+            <StatCard />
           </ChartCard>
         </div>
         <div className="col-sm">
@@ -70,9 +73,16 @@ const GridArea = styled.div`
 
 const ChartCard = styled.div`
   /* flex: 3; */
-  max-height: 400px;
+  /* max-height: 400px; */
+  display: flex;
   background: ${({ theme }) => theme.bg};
   padding: ${v.lgSpacing};
+  .chartArea{
+    width: 600px;
+  }
+  .statArea{
+
+  }
 `;
 
 const ActionBar = styled.div`
