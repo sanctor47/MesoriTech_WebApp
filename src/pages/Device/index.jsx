@@ -6,74 +6,63 @@ import { MdRouter } from "react-icons/md";
 import { RiRouterLine } from "react-icons/ri";
 import mapEx from "../../assets/mapEx.png";
 import ChartCard from "../../components/ChartCard";
-// import LineChartEx from "../../components/LineChartEx";
-
-const DeviceData = {
-  name: "Soil Sensor 01",
-  label: "Feild 01 Soil Sensor 01",
-  feild: "Feild 01",
-  status: true,
-  gateway: false,
-  createdAt: "2022/2/3",
-  battery: "60%",
-  sensors: [
-    {
-      name: "Soil Moisture",
-      type: "Moisture",
-      medium: "Soil",
-      lastReading: "32 %",
-      lastReadingDate: "2022/2/4-12:40:23",
-    },
-    {
-      name: "Soil Temprature",
-      type: "Temprature",
-      medium: "Soil",
-      lastReading: "24.2 C",
-      lastReadingDate: "2022/2/4-12:40:23",
-    },
-    {
-      name: "Air Temprature",
-      type: "Temprature",
-      medium: "Soil",
-      lastReading: "24.2 C",
-      lastReadingDate: "2022/2/4-12:40:23",
-    },
-    {
-      name: "Air Humidity",
-      type: "Temprature",
-      medium: "Soil",
-      lastReading: "20 RH",
-      lastReadingDate: "2022/2/4-12:40:23",
-    },
-  ],
-};
+import {
+  getDeviceById,
+  updateDeviceById,
+} from "../../services/Devices.services";
+import { useEffect, useState } from "react";
+import { getAllFeilds } from "../../services/Feilds.services";
+import ReadingCard from "../../components/ReadingCard";
 
 const Device = () => {
+  const [device, setDevice] = useState();
+
   const params = useParams();
   console.log(params);
+
+  const getDevice = async () => {
+    try {
+      const device = await getDeviceById(params.id);
+      console.log(device);
+      setDevice(device);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getDevice();
+  }, []);
+  
   return (
     <Layout>
-      <Container>
-        <Row>
-          <DeviceCard data={DeviceData} />
-          <BateryCard>
-            <div className="title">Battery Status</div>
-            <div className="value">69%</div>
-            <div className="status">Healthy</div>
-            <div className="date">2022/2/3 - 02:30:50</div>
-          </BateryCard>
-          <StatusCard>
-            <div className="title">Device Status</div>
-            <div className="value">Active</div>
-            <div className="date">2022/2/3 - 02:30:50</div>
-          </StatusCard>
-        </Row>
-        <ReadingArea data={DeviceData} />
-        {/* <ChartCard>
+      {device ? (
+        <Container>
+          <Row>
+            <DeviceCard data={device} />
+            <BateryCard>
+              <div className="title">Battery Status</div>
+              <div className="value">69%</div>
+              <div className="status">Healthy</div>
+              <div className="date">2022/2/3 - 02:30:50</div>
+            </BateryCard>
+            <StatusCard>
+              <div className="title">Device Status</div>
+              <div className="value">Active</div>
+              <div className="date">2022/2/3 - 02:30:50</div>
+            </StatusCard>
+          </Row>
+          <ReadingArea data={device} />
+          {/* <ChartCard>
           <LineChartEx />
         </ChartCard> */}
-        <ChartCard />
-      </Container>
+          {device.sensors.map((sensor) => {
+            return <ChartCard id={device._id} sensor={sensor} />;
+          })}
+        </Container>
+      ) : (
+        <h1>Loading..</h1>
+      )}
     </Layout>
   );
 };
@@ -151,34 +140,138 @@ const Row = styled.div`
 `;
 
 const DeviceCard = ({ data }) => {
-  return (
-    <>
-      <SDeviceCard>
-        <div className="iconContainer">
-          {data.gateway ? (
+  const [showCreds, setShowCreds] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [listOfFeilds, setListOfFeilds] = useState([]);
+  const [editName, setEditName] = useState(data.name);
+  const [editLabel, setEditLabel] = useState(data.label);
+  const [editFeild, setEditFeild] = useState();
+  console.log(data);
+
+  const GetAllFeilds = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const id = user.domain;
+      const feilds = await getAllFeilds(id);
+      console.log(feilds);
+      setListOfFeilds(feilds);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateDevice = async (e) => {
+    e.preventDefault();
+    try {
+      const EditData = {
+        name: editName,
+        label: editLabel,
+        feild: editFeild,
+      };
+      console.log("Device Edit: ", EditData);
+      updateDeviceById(data._id, EditData);
+      setEditName(data.name);
+      setEditLabel(data.label);
+      setEditFeild(null);
+      setEditMode(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    GetAllFeilds();
+  }, []);
+  if (editMode) {
+    return (
+      <>
+        <SDeviceCard>
+          <div className="iconContainer">
+            {data.gateway ? (
+              <>
+                <MdRouter />
+                <p>Gateway</p>
+              </>
+            ) : (
+              <>
+                <RiRouterLine />
+                <p>Node</p>
+              </>
+            )}
+          </div>
+          <div className="dataBlock">
+            <button onClick={() => setEditMode(!editMode)}>Exit Edit</button>
             <>
-              <MdRouter />
-              <p>Gateway</p>
+              <form onSubmit={(e) => updateDevice(e)}>
+                <label htmlFor="name">Edit Name</label>
+                <input
+                  type="text"
+                  placeholder={data.name}
+                  onChange={(e) => setEditName(e.target.value)}
+                />
+                <label htmlFor="label">Edit Label</label>
+                <input
+                  type="text"
+                  placeholder={data.label}
+                  onChange={(e) => setEditLabel(e.target.value)}
+                />
+                <select onChange={(e) => setEditFeild(e.target.value)}>
+                  <option value="none">Assign Later</option>
+                  {listOfFeilds.map((feild) => {
+                    return <option value={feild._id}>{feild.name}</option>;
+                  })}
+                </select>
+                <button type="submit">Save Edits</button>
+              </form>
             </>
-          ) : (
+            <div className="date">Aser Nabil | {data.createdAt}</div>
+            <div className="feild">{data.feild}</div>
+          </div>
+          {/* <div className="mapContainer">
+            <img src={mapEx} alt="" />
+          </div> */}
+        </SDeviceCard>
+      </>
+    );
+  }
+  if (!editMode) {
+    return (
+      <>
+        <SDeviceCard>
+          <div className="iconContainer">
+            {data.gateway ? (
+              <>
+                <MdRouter />
+                <p>Gateway</p>
+              </>
+            ) : (
+              <>
+                <RiRouterLine />
+                <p>Node</p>
+              </>
+            )}
+          </div>
+          <div className="dataBlock">
+            {/* <button onClick={() => setEditMode(!editMode)}>Edit</button> */}
+            <div className="name">{data.name}</div>
+            <div className="label">{data.label}</div>
+            <div className="date">Aser Nabil | {data.createdAt}</div>
+            <div className="feild">{data.feild.name}</div>
+          </div>
+          <button onClick={() => setShowCreds(!showCreds)}>Show Creds</button>
+          {showCreds ? (
             <>
-              <RiRouterLine />
-              <p>Node</p>
+              <div className="clientId">ClientId: {data.clientId}</div>
+              <div className="password">Password: {data.password}</div>
+              <div className="password">_id: {data._id}</div>
             </>
-          )}
-        </div>
-        <div className="dataBlock">
-          <div className="name">{data.name}</div>
-          <div className="label">{data.label}</div>
-          <div className="date">Aser Nabil | {data.createdAt}</div>
-          <div className="feild">{data.feild}</div>
-        </div>
-        <div className="mapContainer">
-          <img src={mapEx} alt="" />
-        </div>
-      </SDeviceCard>
-    </>
-  );
+          ) : null}
+          <div className="mapContainer">
+            <img src={mapEx} alt="" />
+          </div>
+        </SDeviceCard>
+      </>
+    );
+  }
 };
 
 const SDeviceCard = styled.div`
@@ -242,63 +335,19 @@ const SDeviceCard = styled.div`
 `;
 
 const ReadingArea = ({ data }) => {
-  return (
-    <>
-      <h1>Latest Readings</h1>
-      <SReadingArea>
-        <ReadingCard>
-          <div className="name">Air Temprature</div>
-          <div className="value">24.3 C</div>
-          <div className="date">2022/22/11 - 02:38:23</div>
-        </ReadingCard>
-        <ReadingCard>
-          <div className="name">Air Humidity</div>
-          <div className="value">50 RH</div>
-          <div className="date">2022/2/11 - 02:38:23</div>
-        </ReadingCard>
-        <ReadingCard>
-          <div className="name">Soil Temprature</div>
-          <div className="value">26.6 C</div>
-          <div className="date">2022/2/11 - 02:38:23</div>
-        </ReadingCard>
-        <ReadingCard>
-          <div className="name">Soil Moiture</div>
-          <div className="value">50 %</div>
-          <div className="date">2022/2/11 - 02:38:23</div>
-        </ReadingCard>
-        <ReadingCard>
-          <div className="name">Soil Moiture</div>
-          <div className="value">50 %</div>
-          <div className="date">2022/2/11 - 02:38:23</div>
-        </ReadingCard>
-        <ReadingCard>
-          <div className="name">Soil Moiture</div>
-          <div className="value">50 %</div>
-          <div className="date">2022/2/11 - 02:38:23</div>
-        </ReadingCard>
-        <ReadingCard>
-          <div className="name">Soil Moiture</div>
-          <div className="value">50 %</div>
-          <div className="date">2022/2/11 - 02:38:23</div>
-        </ReadingCard>
-        <ReadingCard>
-          <div className="name">Soil Moiture</div>
-          <div className="value">50 %</div>
-          <div className="date">2022/2/11 - 02:38:23</div>
-        </ReadingCard>
-        <ReadingCard>
-          <div className="name">Soil Moiture</div>
-          <div className="value">50 %</div>
-          <div className="date">2022/2/11 - 02:38:23</div>
-        </ReadingCard>
-        <ReadingCard>
-          <div className="name">Soil Moiture</div>
-          <div className="value">50 %</div>
-          <div className="date">2022/22/11 - 02:38:23</div>
-        </ReadingCard>
-      </SReadingArea>
-    </>
-  );
+  if (data) {
+    console.log("Reading Area:", data);
+    return (
+      <>
+        <h1>Latest Readings</h1>
+        <SReadingArea>
+          {data.sensors.map((sensor) => {
+            return <ReadingCard id={data._id} sensor={sensor} />;
+          })}
+        </SReadingArea>
+      </>
+    );
+  }
 };
 
 const SReadingArea = styled.div`
@@ -317,28 +366,28 @@ const SReadingArea = styled.div`
   overflow-x: scroll;
 `;
 
-const ReadingCard = styled.div`
-  min-width: 192px;
-  min-height: 140px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-  /* padding: ${v.smSpacing}; */
-  /* border: 1px solid black; */
-  height: 100%;
-  background: ${({ theme }) => theme.bg};
+// const ReadingCard = styled.div`
+//   min-width: 192px;
+//   min-height: 140px;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-evenly;
+//   align-items: center;
+//   /* padding: ${v.smSpacing}; */
+//   /* border: 1px solid black; */
+//   height: 100%;
+//   background: ${({ theme }) => theme.bg};
 
-  .name {
-    font-size: 1.4rem;
-  }
-  .value {
-    font-size: 1.8rem;
-  }
-  .date {
-    font-size: 1.2rem;
-  }
-`;
+//   .name {
+//     font-size: 1.4rem;
+//   }
+//   .value {
+//     font-size: 1.8rem;
+//   }
+//   .date {
+//     font-size: 1.2rem;
+//   }
+// `;
 
 const StatCard = ({ data }) => {
   return (

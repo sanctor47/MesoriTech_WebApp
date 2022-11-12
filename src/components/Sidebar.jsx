@@ -9,9 +9,9 @@ import {
   AiOutlineSetting,
 } from "react-icons/ai";
 
-import {RiPlantLine} from "react-icons/ri"
+import { RiPlantLine } from "react-icons/ri";
 import { MdLogout, MdOutlineAnalytics } from "react-icons/md";
-import { BsPeople ,BsLayers} from "react-icons/bs";
+import { BsPeople, BsLayers } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { ImConnection } from "react-icons/im";
 import styled from "styled-components";
@@ -21,16 +21,16 @@ import { ThemeContext } from "../App";
 import { useLocation } from "react-router-dom";
 
 const Logout = () => {
-  localStorage.removeItem("token")
-}
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  window.location.reload(false);
+};
 
-const Sidebar = ({sidebarOpen}) => {
+const Sidebar = ({ sidebarOpen }) => {
   const searchRef = useRef(null);
   const { setTheme, theme } = useContext(ThemeContext);
-//   const [sidebarOpen, setSidebarOpen] = useState(false);
+  //   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { pathname } = useLocation();
-
-
 
   return (
     <SSidebar isOpen={sidebarOpen}>
@@ -78,7 +78,11 @@ const Sidebar = ({sidebarOpen}) => {
       <SDivider />
       {secondaryLinksArray.map(({ icon, label, action }) => (
         <SLinkContainer key={label}>
-          <SLink to="/" onClick={action} style={!sidebarOpen ? { width: `fit-content` } : {}}>
+          <SLink
+            to="/"
+            onClick={action}
+            style={!sidebarOpen ? { width: `fit-content` } : {}}
+          >
             <SLinkIcon>{icon}</SLinkIcon>
             {sidebarOpen && <SLinkLabel>{label}</SLinkLabel>}
           </SLink>
@@ -148,7 +152,6 @@ const SSidebar = styled.div`
   position: relative;
 
   transition: all ease-in 1;
-
 `;
 
 const SSidebarButton = styled.button`

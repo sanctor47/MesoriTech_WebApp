@@ -1,29 +1,39 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { login } from "../../services/Auth.services";
 
 const LoginPage = () => {
+
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [error, setError] = useState(null);
-  const nav =useNavigate();
-  const Login = (e) =>{
+
+  const nav = useNavigate();
+
+  const Login = async (e) => {
     e.preventDefault();
     const data = {
       email,
-      password
+      password,
+    };
+    try {
+      const res = await login(data);
+      nav("/");
+    } catch (error) {
+      setError(error.response.data.message)
+      console.log("Login failed: ", error.response.data.message);
     }
-    console.table(data);
-    localStorage.setItem('token', JSON.stringify(data));
-    nav("/")
-  }
+  };
 
   return (
     <Container>
       <Card>
-        <div className="title">Login
-        <Link to="/signup">Create an Account</Link>
+        <div className="title">
+          Login
+          <Link to="/signup">Create an Account</Link>
         </div>
+        {error?<div className="errorBar">{error}</div>:null}
         <form onSubmit={Login}>
           <div className="inputGroup">
             <label htmlFor="email">Email</label>
@@ -32,7 +42,7 @@ const LoginPage = () => {
               placeholder="Enter Email"
               name="email"
               required
-              onChange={(e)=>setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="inputGroup">
@@ -42,7 +52,7 @@ const LoginPage = () => {
               placeholder="Enter Password"
               name="password"
               required
-              onChange={(e)=>setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <button type="submit">Login</button>
@@ -76,6 +86,16 @@ const Card = styled.div`
   align-items: center;
   flex-direction: column;
   padding: 2rem;
+  .errorBar{
+    width: 100%;
+    padding: 0.6rem;
+    margin: 1rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #884c4c78;
+    border-radius: 10px;
+  }
   .title {
     width: 100%;
     /* text-align: left; */

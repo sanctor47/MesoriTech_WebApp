@@ -1,16 +1,14 @@
 import styled from "styled-components";
 import ChartCard from "../../components/ChartCard";
 import Layout from "../../components/Layout";
-import LineChartEx from "../../components/LineChartEx";
 import { v } from "../../styles/variables";
-// import ChartCard as CChartCard from "../../components/ChartCard";
 
 const Dashboard = () => {
   return (
     <Layout>
       <ActionBar>
         <div className="left">
-          <label for="feild">Feild Select:</label>
+          <label htmlFor="feild">Feild Select:</label>
           <StyledSelect>
             <select name="feild" id="feild">
               <option value="feild-01">feild-01</option>
@@ -43,9 +41,9 @@ const Dashboard = () => {
       <FeildCard />
       <GridArea>
         <div className="col-lg">
-          <ChartCard />
-          <ChartCard />
-          <ChartCard />
+          {/* <ChartCard /> */}
+          {/* <ChartCard /> */}
+          {/* <ChartCard /> */}
         </div>
         <div className="col-sm">
           <StatCard />

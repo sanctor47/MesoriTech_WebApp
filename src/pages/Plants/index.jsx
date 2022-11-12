@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Layout from "../../components/Layout";
 import { AiOutlineSearch } from "react-icons/ai";
@@ -6,44 +6,93 @@ import { btnReset, v } from "../../styles/variables";
 import { FaPlusCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FiLogIn } from "react-icons/fi";
+// import Client from "../../services/HttpClient";
+import { getAllPlants } from "../../services/Plants.services";
 
 const Plants = () => {
+  const [plants, setPlants] = useState([]);
+  const [filterd, setFilterd] = useState([]);
+  const [filter, setFilter] = useState("");
+
+  const getPlants = async () => {
+    try {
+      const plants = await getAllPlants();
+      console.log(plants);
+      setPlants(plants);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getPlants();
+  }, []);
+
+  useEffect(() => {
+    if (plants.length > 0) {
+      if (filter === null) {
+        console.log("No filter")
+        setFilterd(plants);
+        return;
+      }
+      if (filter.length > 2 && filter !== "") {
+        console.log("Filter Applied: ", filter)
+        const newArray = plants.Students.filter(function (el) {
+          return (el.name = filter);
+        });
+        console.log(newArray);
+        setFilterd(newArray);
+      }
+    }
+  }, [plants, filter]);
+
   return (
     <Layout>
-      <Container>
-        <div className="title">Plant Catalog</div>
-        <CatalogContainer>
-          <div className="actionBar">
-            <SSearch>
-              <SSearchIcon>
-                <AiOutlineSearch />
-              </SSearchIcon>
-              <input placeholder="Search" />
-            </SSearch>
-          </div>
-          <div className="myCatalog">
-            <div className="title">My Catalog</div>
-            <div className="emptyItemArea">
-              <div className="CTAtext">No Plants in your Catalog, Add one.</div>
-              <div className="CTA">
-                <FaPlusCircle />
+      {!plants || plants.length === 0 ? (
+        <>
+          <h1>Loading....</h1>
+        </>
+      ) : (
+        <Container>
+          <div className="title">Plant Catalog</div>
+          <CatalogContainer>
+            <div className="actionBar">
+              <SSearch>
+                <SSearchIcon>
+                  <AiOutlineSearch />
+                </SSearchIcon>
+                <input
+                  placeholder="Search"
+                  onChange={(e) => setFilter(e.target.value)}
+                />
+              </SSearch>
+            </div>
+            <div className="myCatalog">
+              <div className="title">My Catalog</div>
+              <div className="emptyItemArea">
+                <div className="CTAtext">
+                  No plants in your Catalog, Add one.
+                </div>
+                <div className="CTA">
+                  <FaPlusCircle />
+                </div>
               </div>
             </div>
-          </div>
-          <div className="myCatalog">
-            <div className="title">Catalog</div>
-            <div className="content">
-              {Catalog.map((plant) => {
-                return (
-                  <>
-                    <PlantCard data={plant} />
-                  </>
-                );
-              })}
+            <div className="myCatalog">
+              <div className="title">Catalog</div>
+              <div className="content">
+                {plants.map((plant) => {
+                  return (
+                    <>
+                      <PlantCard data={plant} />
+                    </>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </CatalogContainer>
-      </Container>
+          </CatalogContainer>
+        </Container>
+      )}
     </Layout>
   );
 };
@@ -55,14 +104,14 @@ const PlantCard = ({ data }) => {
     <>
       <SPlantCard>
         <div className="imgContiner">
-          <img src={data.image} alt="img" />
+          <img src={data.imgURL} alt="img" />
         </div>
         <div className="block">
           <div className="name">{data.name}</div>
           <div className="type">{data.type}</div>
         </div>
         <div className="actionBTN">
-          <Link to="#">
+          <Link to={`/plants/${data._id}`}>
             <div className="text">More Details</div>
             <div className="icon">
               <FiLogIn />
@@ -206,7 +255,7 @@ const CatalogContainer = styled.div`
         }
       }
     }
-    .content{
+    .content {
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;

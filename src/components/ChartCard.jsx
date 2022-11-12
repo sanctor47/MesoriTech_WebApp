@@ -1,58 +1,65 @@
 import React from "react";
 import styled from "styled-components";
+import { getLineChartData } from "../services/Readings.services";
 import { v } from "../styles/variables";
 import LineChartEx from "./LineChartEx";
+import ReadingCard from "./ReadingCard";
 import StatCard from "./StatCard";
 
-
 // const ChartCard = ({data, options, params}) => {
-const ChartCard = () => {
-//   const labels = [
-//     "January",
-//     "February",
-//     "March",
-//     "April",
-//     "May",
-//     "June",
-//     "July",
-//   ];
-//   const options = {
-//     responsive: true,
-//     plugins: {
-//       legend: {
-//         position: "top",
-//       },
-//       // title: {
-//       //   display: true,
-//       //   text: "Chart.js Line Chart",
-//       // },
-//     },
-//   };
-//   const data = {
-//     labels,
-//     datasets: [
-//       {
-//         label: "Dataset 1",
-//         data: labels.map(() =>
-//           faker.datatype.number({ min: -1000, max: 1000 })
-//         ),
-//         borderColor: "rgb(255, 99, 132)",
-//         backgroundColor: "rgba(255, 99, 132, 0.5)",
-//       },
-//       {
-//         label: "Dataset 2",
-//         data: labels.map(() =>
-//           faker.datatype.number({ min: -1000, max: 1000 })
-//         ),
-//         borderColor: "rgb(53, 162, 235)",
-//         backgroundColor: "rgba(53, 162, 235, 0.5)",
-//       },
-//     ],
-//   };
+const ChartCard = ({ id, sensor }) => {
+  const [readings, setReadings] = React.useState();
+  const [chartData, setChartData] = React.useState();
+
+  console.log("From Chart: ", readings);
+
+  const createData = () => {
+    let labels = [];
+    let data = [];
+    for (let index = 0; index < readings.length; index++) {
+      const element = readings[index];
+      labels.push(element.createdAt);
+      data.push(element.value);
+    }
+    setChartData({
+      labels,
+      datasets: [
+        {
+          label: sensor.name,
+          data,
+          borderColor: "rgb(255, 99, 132)",
+          backgroundColor: "rgba(255, 99, 132, 0.5)",
+        },
+      ],
+    });
+  };
+
+  const GetLatestReadings = async () => {
+    try {
+      const readings = await getLineChartData(id, sensor.name);
+      // console.log("Readings: ", readings);
+      setReadings(readings);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  React.useEffect(() => {
+    if (id) {
+      GetLatestReadings();
+    }
+  }, []);
+  React.useEffect(() => {
+    if (readings) {
+      // console.log("readings: ", readings);
+      createData();
+    }
+  }, [readings]);
+
   return (
     <SChartCard>
       <div className="header">
-        <h1>Percpation</h1>
+        <h1>{sensor.name}</h1>
         <label htmlFor="res">Resolution: </label>
         <StyledSelect>
           <select name="res" id="res">
@@ -83,10 +90,10 @@ const ChartCard = () => {
       </div>
       <div className="body">
         <div className="chartArea">
-          <LineChartEx />
+          {chartData ? <LineChartEx data={chartData} /> : <h1>Loading...</h1>}
         </div>
         <div className="statArea">
-          <StatCard />
+          <ReadingCard id={id} sensor={sensor} />
         </div>
       </div>
     </SChartCard>
@@ -100,6 +107,7 @@ const SChartCard = styled.div`
   flex-direction: column;
   background: ${({ theme }) => theme.bg};
   padding: ${v.lgSpacing};
+  max-height: 420px;
   /* max-width: 1000px; */
   .header {
     display: flex;
@@ -116,6 +124,10 @@ const SChartCard = styled.div`
       /* width: 620px; */
       display: flex;
       flex: 3;
+  max-height: 420px;
+
+      /* height: 100%; */
+      /* max-height: 300px; */
     }
     .statArea {
       flex: 1;

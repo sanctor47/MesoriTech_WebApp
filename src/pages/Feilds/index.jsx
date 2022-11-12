@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Layout from "../../components/Layout";
 import { AiOutlineSearch } from "react-icons/ai";
@@ -6,13 +6,54 @@ import { btnReset, v } from "../../styles/variables";
 import { BiEdit } from "react-icons/bi";
 import { FaPlusCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { getAllFeilds, NewField } from "../../services/Feilds.services";
+import FieldReport from "./FieldReport";
+
 const Feilds = () => {
+  const [feilds, setFeilds] = useState([]);
   const [activeFeild, setActiveFeild] = useState(null);
+  const [openForm, setOpenForm] = useState(false);
+  const [newFeildnName, setNewFeildnName] = useState();
+  const [newFeildnArea, setNewFeildnArea] = useState();
 
   const feildSelect = (id) => {
     console.log(id);
-    setActiveFeild(id);
+    const index = feilds.findIndex((x) => x._id === id);
+    setActiveFeild(feilds[index]);
   };
+
+  const addFeild = (e) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const id = user.domain;
+    e.preventDefault();
+    const data = {
+      name: newFeildnName,
+      area: newFeildnArea,
+      domain: id,
+    };
+    console.log("New Feidl: ", data);
+    NewField(data);
+    getFeilds();
+    setNewFeildnName("");
+    setNewFeildnArea("");
+    setOpenForm(false);
+  };
+
+  const getFeilds = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const id = user.domain;
+      const feilds = await getAllFeilds(id);
+      console.log(feilds);
+      setFeilds(feilds);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getFeilds();
+  }, []);
 
   return (
     <Layout>
@@ -25,20 +66,52 @@ const Feilds = () => {
               </SSearchIcon>
               <input placeholder="Search" />
             </SSearch>
-            <AddFeildButton>
+            <AddFeildButton onClick={() => setOpenForm(true)}>
               <div className="CTAText">Add Feild</div>
-              <div className="icon"><FaPlusCircle/></div>
+              <div className="icon">
+                <FaPlusCircle />
+              </div>
             </AddFeildButton>
           </FilterBar>
-          {feilds.map((feild) => {
-            return (
-              <>
-                <FeildCard feildSelect={feildSelect} data={feild} />
-              </>
-            );
-          })}
+          <AddFeildFrom show={openForm}>
+            {/* <h1>Add New Feild</h1> */}
+            <form onSubmit={(e) => addFeild(e)}>
+              <label htmlFor="name">Name</label>
+              <div className="inputGroup">
+                <input
+                  type="text"
+                  placeholder="Enter Feild Name"
+                  onChange={(e) => setNewFeildnName(e.target.value)}
+                  value={newFeildnName}
+                  required
+                />
+              </div>
+              <label htmlFor="name">Area</label>
+              <div className="inputGroup">
+                <input
+                  type="text"
+                  required
+                  value={newFeildnArea}
+                  placeholder="Enter Feild Area"
+                  onChange={(e) => setNewFeildnArea(e.target.value)}
+                />
+              </div>
+              <button type="submit">Add Feild</button>
+            </form>
+          </AddFeildFrom>
+          {feilds.length > 0 ? (
+            feilds.map((feild) => {
+              return (
+                <>
+                  <FeildCard feildSelect={feildSelect} data={feild} />
+                </>
+              );
+            })
+          ) : (
+            <h1>No Feilds</h1>
+          )}
         </FeildsList>
-        <FeildReport id={activeFeild} />
+        <FieldReport data={activeFeild} />
         {/* <MapView /> */}
       </Container>
     </Layout>
@@ -46,6 +119,36 @@ const Feilds = () => {
 };
 
 export default Feilds;
+
+const AddFeildFrom = styled.div`
+  /* display: block; */
+  display: ${(props) => (props.show ? "flex" : "none")};
+  width: 100%;
+  padding: 0.5rem;
+  min-height: 80px;
+  background: ${({ theme }) => theme.bg};
+  justify-content: space-between;
+  align-items: center;
+  .inputGroup {
+    display: flex;
+    flex-direction: column;
+    background: ${({ theme }) => theme.bgAlpha};
+    border: 1px solid ${({ theme }) => theme.bg3};
+    border-radius: ${v.borderRadius};
+    input {
+      padding: 0 ${v.smSpacing};
+      font-family: inherit;
+      letter-spacing: inherit;
+      font-size: 16px;
+      width: 100%;
+      outline: none;
+      border: none;
+      color: inherit;
+      background: transparent;
+    }
+    display: flex;
+  }
+`;
 
 const AddFeildButton = styled.div`
   display: flex;
@@ -93,7 +196,7 @@ const MapView = styled.div`
 const FeildCard = ({ data, feildSelect }) => {
   return (
     <>
-      <SFeildCard onClick={() => feildSelect(data.id)}>
+      <SFeildCard onClick={() => feildSelect(data._id)}>
         <div className="left">
           <div className="name">{data.name}</div>
           <div className="date">{data.createdAt}</div>
@@ -189,347 +292,6 @@ const SSearchIcon = styled.button`
   }
 `;
 
-const FeildReport = ({ id }) => {
-  let data = null;
-  if (id !== null) {
-    data = feilds[id];
-    return (
-      <SFeildReport>
-        <div className="infoCard">
-          <div className="left">
-            <div className="title">{data.name}</div>
-            <div className="line">
-              {data.orgnization} | {data.createdBy}
-            </div>
-            <div className="line">
-              {data.area}ha | {data.createdAt}
-            </div>
-            <Link to="/">Go to dashboard</Link>
-          </div>
-          <div className="right">
-            <div className="actionBTN">
-              <a href="#">
-                <div className="icon">
-                  <BiEdit />
-                </div>
-                <div className="text">Edit</div>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="alarmsCard">
-          <div className="title">
-            <div className="text">Alarms</div>
-            <div className="addItemBtn">
-              <div className="CTAtext">Add Alarm</div>
-              <div className="icon">
-                <FaPlusCircle />
-              </div>
-            </div>
-          </div>
-          <div className="content">
-            <AlarmCard />
-            <AlarmCard />
-            <AlarmCard />
-            <AlarmCard />
-          </div>
-        </div>
-        <div className="plantCard">
-          <div className="title">
-            <div className="text">Plant Productions</div>
-            <div className="addItemBtn">
-              <div className="CTAtext">Add Plant</div>
-              <div className="icon">
-                <FaPlusCircle />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="deviceCard">
-          <div className="title">
-            <div className="text">Devices</div>
-            <div className="addItemBtn">
-              <div className="CTAtext">Add Device</div>
-              <div className="icon">
-                <FaPlusCircle />
-              </div>
-            </div>
-          </div>
-        </div>
-      </SFeildReport>
-    );
-  }
-};
 
-const SFeildReport = styled.div`
-  flex: 3;
-  /* background: ${({ theme }) => theme.bg}; */
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  .infoCard {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: ${({ theme }) => theme.bg};
-    .right {
-      height: 100%;
-      .actionBTN {
-        /* justify-self: flex-end; */
-        font-size: 28px;
-        background-color: ${({ theme }) => theme.primary};
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        a {
-          text-decoration: none;
-          color: white;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          padding: 0.8rem;
-          .text {
-            font-size: 1rem;
-          }
-        }
-      }
-    }
-    .left {
-      height: 100%;
-      padding: 0.8rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      .title {
-        font-size: 2rem;
-      }
-      /* border: 1px solid black; */
-    }
-  }
-  .alarmsCard {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: column;
-    background: ${({ theme }) => theme.bg};
-    padding: 0.5rem;
-    gap: 0.8rem;
-    .title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      .text {
-        text-decoration: underline;
-        font-size: 1.6rem;
-      }
-      .addItemBtn {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: ${({ theme }) => theme.primary};
-        color: white;
-        padding: 0.4rem 0.8rem;
-        border-radius: 1px;
-        gap: 0.4rem;
-        .CTAtext {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 1.2rem;
-        }
-        .icon {
-          font-size: 1.2rem;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-      }
-    }
-    .content {
-      display: flex;
-      gap: 1rem;
-    }
-  }
-  .plantCard {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: column;
-    background: ${({ theme }) => theme.bg};
-    padding: 0.5rem;
-    gap: 0.8rem;
-    .title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      .text {
-        text-decoration: underline;
-        font-size: 1.6rem;
-      }
-      .addItemBtn {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.4rem;
 
-        background-color: ${({ theme }) => theme.primary};
-        color: white;
-        padding: 0.4rem 0.8rem;
-        border-radius: 1px;
-        .CTAtext {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 1.2rem;
-        }
-        .icon {
-          font-size: 1.2rem;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-      }
-    }
-    .content {
-      display: flex;
-      gap: 1rem;
-    }
-  }
-  .deviceCard {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: column;
-    background: ${({ theme }) => theme.bg};
-    padding: 0.5rem;
-    gap: 0.8rem;
-    .title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      .text {
-        text-decoration: underline;
-        font-size: 1.6rem;
-      }
-      .addItemBtn {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.4rem;
-        background-color: ${({ theme }) => theme.primary};
-        color: white;
-        padding: 0.4rem 0.8rem;
-        border-radius: 1px;
-        .CTAtext {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 1.2rem;
-        }
-        .icon {
-          font-size: 1.2rem;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-      }
-    }
-    .content {
-      display: flex;
-      gap: 1rem;
-    }
-  }
-`;
 
-const AlarmCard = () => {
-  return (
-    <SAlarmCard>
-      <div className="heading">Air Temprature</div>
-      <div className="body">24/28 C</div>
-      <div className="status">No-Alarm</div>
-    </SAlarmCard>
-  );
-};
-
-const SAlarmCard = styled.div`
-  border: 1px solid #ddd;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  /* align-items: center; */
-  padding: 1rem;
-  /* gap:1rem; */
-  .heading {
-    font-size: 1.2rem;
-  }
-  .body {
-    font-size: 1.8rem;
-  }
-  .status {
-    font-size: 1rem;
-  }
-`;
-
-const feilds = [
-  {
-    id: 0,
-    name: "Feild-001",
-    createdAt: "2022/2/3",
-    orgnization: "Dina Farms",
-    area: 0.27,
-    location: {
-      region: "Cario",
-      city: "Giza",
-    },
-    createdBy: "Aser Nabil",
-    devices: [
-      {
-        name: "Soil Sensor 1",
-      },
-    ],
-  },
-  {
-    id: 1,
-    name: "Feild-002",
-    createdAt: "2022/2/3",
-    orgnization: "Dina Farms",
-    area: 0.27,
-    location: {
-      region: "Cario",
-      city: "Giza",
-    },
-    createdBy: "Aser Nabil",
-    devices: [
-      {
-        name: "Soil Sensor 1",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Feild-003",
-    createdAt: "2022/2/3",
-    orgnization: "Dina Farms",
-    area: 0.27,
-    location: {
-      region: "Cario",
-      city: "Giza",
-    },
-    createdBy: "Aser Nabil",
-    devices: [
-      {
-        name: "Soil Sensor 1",
-      },
-    ],
-  },
-];

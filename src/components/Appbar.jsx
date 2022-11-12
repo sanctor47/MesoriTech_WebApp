@@ -8,13 +8,15 @@ import { useContext } from "react";
 const Appbar = ({ sidebarControl }) => {
   //   const { collapseSidebar } = useProSidebar();
   const { setTheme, theme } = useContext(ThemeContext);
+  const user = JSON.parse(localStorage.getItem("user"));
+  // console.log(user)
   return (
     <Container>
       <div className="right">
         <NavExpander onClick={sidebarControl}>
           <FaBars />
         </NavExpander>
-        <Text>Hello, Aser</Text>
+        <Text>Hello, {user.firstName} {user.lastName}</Text>
       </div>
       <div className="left">
         <ActionArea>
