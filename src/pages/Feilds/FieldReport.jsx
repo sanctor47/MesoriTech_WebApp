@@ -4,11 +4,30 @@ import styled from "styled-components";
 import { BiEdit } from "react-icons/bi";
 import { FaPlusCircle } from "react-icons/fa";
 import FeildDeviceCard from "./FeildDeviceCard";
+import Map from "../../components/Map";
 
 const FieldReport = ({ data }) => {
+  let points = [];
+  const getDevicePoints = () => {
+    if (data.devices && data.devices.length > 0) {
+      for (let index = 0; index < data.devices.length; index++) {
+        const element = data.devices[index];
+        if (element.location) {
+          console.log("Device: ", element.location);
+          points.push({ lat: element.location.lat, lon: element.location.lon });
+        }
+      }
+    }
+    console.log("points: ", points);
+  };
+
   if (data) {
+    getDevicePoints();
     return (
       <Container>
+        <MapContainer>
+          <Map data={points} />
+        </MapContainer>
         <div className="infoCard">
           <div className="left">
             <div className="title">{data.name}</div>
@@ -96,6 +115,14 @@ const FieldReport = ({ data }) => {
     );
   }
 };
+
+const MapContainer = styled.div`
+  .map-view {
+    height: 400px;
+    /* width: 600px; */
+    overflow: hidden;
+  }
+`;
 
 const Container = styled.div`
   flex: 3;

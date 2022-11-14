@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import Layout from "../../components/Layout";
 import { v } from "../../styles/variables";
@@ -33,7 +33,7 @@ const Device = () => {
   useEffect(() => {
     getDevice();
   }, []);
-  
+
   return (
     <Layout>
       {device ? (
@@ -145,6 +145,8 @@ const DeviceCard = ({ data }) => {
   const [listOfFeilds, setListOfFeilds] = useState([]);
   const [editName, setEditName] = useState(data.name);
   const [editLabel, setEditLabel] = useState(data.label);
+  const [editLat, setEditLat] = useState(data.location?.lat);
+  const [editLon, setEditLon] = useState(data.location?.lon);
   const [editFeild, setEditFeild] = useState();
   console.log(data);
 
@@ -167,6 +169,10 @@ const DeviceCard = ({ data }) => {
         name: editName,
         label: editLabel,
         feild: editFeild,
+        location: {
+          lat: editLat,
+          lon: editLon,
+        },
       };
       console.log("Device Edit: ", EditData);
       updateDeviceById(data._id, EditData);
@@ -214,6 +220,19 @@ const DeviceCard = ({ data }) => {
                   placeholder={data.label}
                   onChange={(e) => setEditLabel(e.target.value)}
                 />
+                <label htmlFor="lat">Edit Lat</label>
+                <input
+                  type="text"
+                  placeholder={data.location?.lat}
+                  onChange={(e) => setEditLat(e.target.value)}
+                />
+                <label htmlFor="lon">Edit Lon</label>
+                <input
+                  type="text"
+                  placeholder={data.location?.lon}
+                  onChange={(e) => setEditLon(e.target.value)}
+                />
+
                 <select onChange={(e) => setEditFeild(e.target.value)}>
                   <option value="none">Assign Later</option>
                   {listOfFeilds.map((feild) => {
@@ -224,7 +243,7 @@ const DeviceCard = ({ data }) => {
               </form>
             </>
             <div className="date">Aser Nabil | {data.createdAt}</div>
-            <div className="feild">{data.feild}</div>
+            <div className="feild">{data.feild.name}</div>
           </div>
           {/* <div className="mapContainer">
             <img src={mapEx} alt="" />
@@ -251,11 +270,14 @@ const DeviceCard = ({ data }) => {
             )}
           </div>
           <div className="dataBlock">
-            {/* <button onClick={() => setEditMode(!editMode)}>Edit</button> */}
+            <button onClick={() => setEditMode(!editMode)}>Edit</button>
             <div className="name">{data.name}</div>
             <div className="label">{data.label}</div>
             <div className="date">Aser Nabil | {data.createdAt}</div>
-            <div className="feild">{data.feild.name}</div>
+            <Link to={`/feilds/${data.feild._id}`} className="feild">
+              {data.feild.name}
+            </Link>
+            <div className="locationData">{JSON.stringify(data.location)}</div>
           </div>
           <button onClick={() => setShowCreds(!showCreds)}>Show Creds</button>
           {showCreds ? (

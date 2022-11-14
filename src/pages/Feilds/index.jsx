@@ -8,6 +8,8 @@ import { FaPlusCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { getAllFeilds, NewField } from "../../services/Feilds.services";
 import FieldReport from "./FieldReport";
+import { FiLogIn } from "react-icons/fi";
+
 
 const Feilds = () => {
   const [feilds, setFeilds] = useState([]);
@@ -111,7 +113,7 @@ const Feilds = () => {
             <h1>No Feilds</h1>
           )}
         </FeildsList>
-        <FieldReport data={activeFeild} />
+        {/* <FieldReport data={activeFeild} /> */}
         {/* <MapView /> */}
       </Container>
     </Layout>
@@ -207,6 +209,11 @@ const FeildCard = ({ data, feildSelect }) => {
             Active Sensors: {data.devices.length}
           </div>
         </div>
+        <div className="actionBTN">
+        <Link to={`/feilds/${data._id}`}>
+          <FiLogIn />
+        </Link>
+      </div>
       </SFeildCard>
     </>
   );
@@ -251,6 +258,22 @@ const SFeildCard = styled.div`
     }
     .date {
       font-size: 1rem;
+    }
+  }
+  .actionBTN {
+    /* justify-self: flex-end; */
+    font-size: 64px;
+    background-color: ${({ theme }) => theme.primary};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    a {
+      text-decoration: none;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.8rem;
     }
   }
 `;

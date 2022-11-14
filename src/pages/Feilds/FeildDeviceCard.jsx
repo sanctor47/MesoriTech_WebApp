@@ -34,25 +34,25 @@ const mockdata = {
 
 const FeildDeviceCard = ({ id }) => {
   console.log(id);
-  const [device, setDevice] = React.useState();
-  const GetDeviceById = async () => {
-    try {
-      const device = await getDeviceById(id);
-      console.log("device: ", device);
-      setDevice(device);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [device, setDevice] = React.useState(id);
+  // const GetDeviceById = async () => {
+  //   try {
+  //     const device = await getDeviceById(id);
+  //     console.log("device: ", device);
+  //     setDevice(device);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  React.useEffect(() => {
-    if (id) {
-      GetDeviceById();
-    }
-  }, []);
-  React.useEffect(() => {
-    console.log(device);
-  }, [device]);
+  // React.useEffect(() => {
+  //   if (id) {
+  //     GetDeviceById();
+  //   }
+  // }, []);
+  // React.useEffect(() => {
+  //   console.log(device);
+  // }, [device]);
   return (
     <Container>
       {device ? (

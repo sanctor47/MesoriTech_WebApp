@@ -12,11 +12,10 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import Device from "./pages/Device";
 import Plant from "./pages/Plant";
+import Feild from "./pages/Feild";
 
 const RouteGaurd = () => {
-  const auth = localStorage.getItem("token")
-  // const auth = "7409327509327";
-  // const auth = null;
+  const auth = localStorage.getItem("token");
   return auth ? <Outlet /> : <Navigate to="/login" />;
 };
 
@@ -33,6 +32,7 @@ function App() {
           <Route element={<RouteGaurd />}>
             <Route exact path="/" element={<Dashboard />} />
             <Route exact path="/feilds" element={<Feilds />} />
+            <Route path="/feilds/:id" element={<Feild />} />
             <Route exact path="/devices" element={<Devices />} />
             <Route path="/devices/:id" element={<Device />} />
             <Route exact path="/plants" element={<Plants />} />
