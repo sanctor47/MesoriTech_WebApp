@@ -4,10 +4,11 @@ import { RiRouterLine } from "react-icons/ri";
 import { FiLogIn } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import ReadingCard from "../../components/ReadingCard";
+import { Accordion, Card } from "react-bootstrap";
 
 const DeviceCard = ({ data }) => {
   return (
-    <LCContainer>
+    <Card>
       <div className="iconContainer">
         {data.isGateway ? (
           <>
@@ -17,40 +18,80 @@ const DeviceCard = ({ data }) => {
         ) : (
           <>
             <RiRouterLine />
-            <p>Node</p>
+            <span>Node</span>
           </>
         )}
       </div>
-      <div className="dataBlock">
-        <div className="name">{data.name}</div>
-        <div className="label">{data.label}</div>
-        <div className="createdAt">
-          {data.createdAt} | {data.feild ? data.feild.name : "Un-Assigned"}
-        </div>
-      </div>
-      <div className="batteryBlock">
-        <div className="statusBlock">
-          {data.active ? "Active" : "In-Active"}
-        </div>
-        <div className="battBlock">{data.battery}</div>
-        <div className="batMessage">Battery Level: Good</div>
-      </div>
-      <div className="readingsArea">
-        {data.sensors.map((sensor) => {
+      <Card.Body>
+        <Card.Title>{data.name}</Card.Title>
+        <Card.Text>{data.label}</Card.Text>
+        <Accordion>
+        {/* {data.sensors.map((sensor) => {
           return <ReadingCard id={data._id} sensor={sensor} />;
-        })}
-      </div>
-      <div className="actionBTN">
-        <Link to={`/devices/${data._id}`}>
-          <FiLogIn />
-        </Link>
-      </div>
-    </LCContainer>
+        })} */}
+          <Accordion.Item eventKey="0">
+            <Accordion.Header>Air Temprature</Accordion.Header>
+            <Accordion.Body>
+              24C
+            </Accordion.Body>
+          </Accordion.Item>
+          <Accordion.Item eventKey="1">
+            <Accordion.Header>Air Humidity</Accordion.Header>
+            <Accordion.Body>
+              24Rh
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+      </Card.Body>
+    </Card>
   );
 };
 
-export default DeviceCard;
+// const DeviceCard = ({ data }) => {
+//   return (
+//     <LCContainer>
+//       <div className="iconContainer">
+//         {data.isGateway ? (
+//           <>
+//             <MdRouter />
+//             <p>Gateway</p>
+//           </>
+//         ) : (
+//           <>
+//             <RiRouterLine />
+//             <p>Node</p>
+//           </>
+//         )}
+//       </div>
+//       <div className="dataBlock">
+//         <div className="name">{data.name}</div>
+//         <div className="label">{data.label}</div>
+//         <div className="createdAt">
+//           {data.createdAt} | {data.feild ? data.feild.name : "Un-Assigned"}
+//         </div>
+//       </div>
+//       <div className="batteryBlock">
+//         <div className="statusBlock">
+//           {data.active ? "Active" : "In-Active"}
+//         </div>
+//         <div className="battBlock">{data.battery}</div>
+//         <div className="batMessage">Battery Level: Good</div>
+//       </div>
+//       <div className="readingsArea">
+//         {data.sensors.map((sensor) => {
+//           return <ReadingCard id={data._id} sensor={sensor} />;
+//         })}
+//       </div>
+//       <div className="actionBTN">
+//         <Link to={`/devices/${data._id}`}>
+//           <FiLogIn />
+//         </Link>
+//       </div>
+//     </LCContainer>
+//   );
+// };
 
+export default DeviceCard;
 
 const LCContainer = styled.div`
   width: 100%;

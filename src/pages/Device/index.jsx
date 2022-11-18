@@ -10,9 +10,10 @@ import {
   getDeviceById,
   updateDeviceById,
 } from "../../services/Devices.services";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getAllFeilds } from "../../services/Feilds.services";
 import ReadingCard from "../../components/ReadingCard";
+import { Button, Card, Col, Form, Stack } from "react-bootstrap";
 
 const Device = () => {
   const [device, setDevice] = useState();
@@ -150,6 +151,11 @@ const DeviceCard = ({ data }) => {
   const [editFeild, setEditFeild] = useState();
   console.log(data);
 
+  const nameRef = useRef(null);
+  const labelRef = useRef(null);
+  const latRef = useRef(null);
+  const lonRef = useRef(null);
+
   const GetAllFeilds = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
@@ -166,18 +172,18 @@ const DeviceCard = ({ data }) => {
     e.preventDefault();
     try {
       const EditData = {
-        name: editName,
-        label: editLabel,
+        name: nameRef.current.value,
+        label: labelRef.current.value,
         feild: editFeild,
         location: {
-          lat: editLat,
-          lon: editLon,
+          lat: latRef.current.value,
+          lon: lonRef.current.value,
         },
       };
       console.log("Device Edit: ", EditData);
-      updateDeviceById(data._id, EditData);
-      setEditName(data.name);
-      setEditLabel(data.label);
+      // updateDeviceById(data._id, EditData);
+      // setEditName(data.name);
+      // setEditLabel(data.label);
       setEditFeild(null);
       setEditMode(false);
     } catch (error) {
@@ -205,42 +211,65 @@ const DeviceCard = ({ data }) => {
             )}
           </div>
           <div className="dataBlock">
-            <button onClick={() => setEditMode(!editMode)}>Exit Edit</button>
+            <Button
+              variant="outline-primary"
+              onClick={() => setEditMode(!editMode)}
+            >
+              Exit Edit
+            </Button>
             <>
-              <form onSubmit={(e) => updateDevice(e)}>
-                <label htmlFor="name">Edit Name</label>
-                <input
-                  type="text"
-                  placeholder={data.name}
-                  onChange={(e) => setEditName(e.target.value)}
-                />
-                <label htmlFor="label">Edit Label</label>
-                <input
-                  type="text"
-                  placeholder={data.label}
-                  onChange={(e) => setEditLabel(e.target.value)}
-                />
-                <label htmlFor="lat">Edit Lat</label>
-                <input
-                  type="text"
-                  placeholder={data.location?.lat}
-                  onChange={(e) => setEditLat(e.target.value)}
-                />
-                <label htmlFor="lon">Edit Lon</label>
-                <input
-                  type="text"
-                  placeholder={data.location?.lon}
-                  onChange={(e) => setEditLon(e.target.value)}
-                />
-
-                <select onChange={(e) => setEditFeild(e.target.value)}>
-                  <option value="none">Assign Later</option>
-                  {listOfFeilds.map((feild) => {
-                    return <option value={feild._id}>{feild.name}</option>;
-                  })}
-                </select>
-                <button type="submit">Save Edits</button>
-              </form>
+              <Form onSubmit={updateDevice}>
+                <Stack>
+                  <Row>
+                    <Col>
+                      <Form.Group>
+                        <Form.Label>Edit Name</Form.Label>
+                        <Form.Control ref={nameRef} />
+                      </Form.Group>
+                    </Col>
+                    <Col>
+                      <Form.Group>
+                        <Form.Label>Edit Label</Form.Label>
+                        <Form.Control ref={labelRef} />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Stack>
+                <Stack>
+                  <Row>
+                    <Col>
+                      <Form.Group>
+                        <Form.Label>Edit Lat</Form.Label>
+                        <Form.Control ref={latRef} />
+                      </Form.Group>
+                    </Col>
+                    <Col>
+                      <Form.Group>
+                        <Form.Label>Edit Lon</Form.Label>
+                        <Form.Control ref={lonRef} />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Stack>
+                <Stack>
+                  <Row>
+                    <Col>
+                      <Form.Select
+                        aria-label="Default select example"
+                        onChange={(e) => setEditFeild(e.target.value)}
+                      >
+                        <option value="none">Assign Later</option>
+                        {listOfFeilds.map((feild) => {
+                          return (
+                            <option value={feild._id}>{feild.name}</option>
+                          );
+                        })}
+                      </Form.Select>
+                    </Col>
+                  </Row>
+                </Stack>
+                <Button type="submit">Save Edits</Button>
+              </Form>
             </>
             <div className="date">Aser Nabil | {data.createdAt}</div>
             <div className="feild">{data.feild.name}</div>
@@ -256,6 +285,7 @@ const DeviceCard = ({ data }) => {
     return (
       <>
         <SDeviceCard>
+          <Card.Body>
           <div className="iconContainer">
             {data.gateway ? (
               <>
@@ -269,17 +299,15 @@ const DeviceCard = ({ data }) => {
               </>
             )}
           </div>
-          <div className="dataBlock">
-            <button onClick={() => setEditMode(!editMode)}>Edit</button>
-            <div className="name">{data.name}</div>
-            <div className="label">{data.label}</div>
-            <div className="date">Aser Nabil | {data.createdAt}</div>
+            <Stack>
+            </Stack>
+            <Card.Title>{data.name}</Card.Title>
+            <Card.Text>{data.label}</Card.Text>
+            <Card.Text>Aser Nabil | {data.createdAt}</Card.Text>
             <Link to={`/feilds/${data.feild._id}`} className="feild">
               {data.feild.name}
             </Link>
             <div className="locationData">{JSON.stringify(data.location)}</div>
-          </div>
-          <button onClick={() => setShowCreds(!showCreds)}>Show Creds</button>
           {showCreds ? (
             <>
               <div className="clientId">ClientId: {data.clientId}</div>
@@ -287,23 +315,28 @@ const DeviceCard = ({ data }) => {
               <div className="password">_id: {data._id}</div>
             </>
           ) : null}
-          <div className="mapContainer">
-            <img src={mapEx} alt="" />
-          </div>
+          </Card.Body>
+          <Card.Footer>
+          <Button onClick={() => setEditMode(!editMode)}>Edit</Button>
+              <Button onClick={() => setShowCreds(!showCreds)}>
+                Show Creds
+              </Button>
+          </Card.Footer>
         </SDeviceCard>
       </>
     );
   }
 };
 
-const SDeviceCard = styled.div`
+const SDeviceCard = styled(Card)`
   background: ${({ theme }) => theme.bg};
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* display: flex; */
+  /* flex-direction: row; */
+  /* justify-content: center; */
+  /* align-items: center; */
   /* border: 1px solid black; */
   /* padding: ${v.lgSpacing}; */
-  gap: ${v.smSpacing};
+  /* gap: ${v.smSpacing}; */
   .iconContainer {
     margin: ${v.lgSpacing};
 

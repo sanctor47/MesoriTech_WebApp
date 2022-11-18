@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 import { FiLogIn } from "react-icons/fi";
 // import Client from "../../services/HttpClient";
 import { getAllPlants } from "../../services/Plants.services";
-import { Button, Card, Col, Row, Stack } from "react-bootstrap";
 
 const Plants = () => {
   const [plants, setPlants] = useState([]);
@@ -32,12 +31,12 @@ const Plants = () => {
   useEffect(() => {
     if (plants.length > 0) {
       if (filter === null) {
-        console.log("No filter");
+        console.log("No filter")
         setFilterd(plants);
         return;
       }
       if (filter.length > 2 && filter !== "") {
-        console.log("Filter Applied: ", filter);
+        console.log("Filter Applied: ", filter)
         const newArray = plants.Students.filter(function (el) {
           return (el.name = filter);
         });
@@ -54,30 +53,45 @@ const Plants = () => {
           <h1>Loading....</h1>
         </>
       ) : (
-        <>
-          <Row className="align-items-center mb-4">
-            <Col>
-              <h1 style={{ fontSize: 24 }}>Plants</h1>
-            </Col>
-            <Col xs="auto">
-              <Stack gap={2} direction="horizontal">
-                <Link to="/new">
-                  <Button variant="primary">Create</Button>
-                </Link>
-                <Button variant="outline-primary">Edit Tags</Button>
-              </Stack>
-            </Col>
-          </Row>
-          <Row xs={1} sm={2} lg={4} xl={6} className="g-3">
-            {plants.map((plant) => (
-              <>
-                <Col key={plant.id}>
-                  <PlantCard data={plant} />
-                </Col>
-              </>
-            ))}
-          </Row>
-        </>
+        <Container>
+          <div className="title">Plant Catalog</div>
+          <CatalogContainer>
+            <div className="actionBar">
+              <SSearch>
+                <SSearchIcon>
+                  <AiOutlineSearch />
+                </SSearchIcon>
+                <input
+                  placeholder="Search"
+                  onChange={(e) => setFilter(e.target.value)}
+                />
+              </SSearch>
+            </div>
+            <div className="myCatalog">
+              <div className="title">My Catalog</div>
+              <div className="emptyItemArea">
+                <div className="CTAtext">
+                  No plants in your Catalog, Add one.
+                </div>
+                <div className="CTA">
+                  <FaPlusCircle />
+                </div>
+              </div>
+            </div>
+            <div className="myCatalog">
+              <div className="title">Catalog</div>
+              <div className="content">
+                {plants.map((plant) => {
+                  return (
+                    <>
+                      <PlantCard data={plant} />
+                    </>
+                  );
+                })}
+              </div>
+            </div>
+          </CatalogContainer>
+        </Container>
       )}
     </Layout>
   );
@@ -88,38 +102,74 @@ export default Plants;
 const PlantCard = ({ data }) => {
   return (
     <>
-      <SCard as={Link} to={`/plants/${data._id}`}>
-        <Card.Img variant="top" src={data.imgURL} />
-        <Card.Body>
-          <Stack gap={2} className=" justify-content-center h-100">
-            <Card.Title>{data.name}</Card.Title>
-            <Card.Text>{data.type}</Card.Text>
-            <Button>
-              <div className="text">More Details</div>
-              <div className="icon">
-                <FiLogIn />
-              </div>
-            </Button>
-          </Stack>
-        </Card.Body>
-      </SCard>
+      <SPlantCard>
+        <div className="imgContiner">
+          <img src={data.imgURL} alt="img" />
+        </div>
+        <div className="block">
+          <div className="name">{data.name}</div>
+          <div className="type">{data.type}</div>
+        </div>
+        <div className="actionBTN">
+          <Link to={`/plants/${data._id}`}>
+            <div className="text">More Details</div>
+            <div className="icon">
+              <FiLogIn />
+            </div>
+          </Link>
+        </div>
+      </SPlantCard>
     </>
   );
 };
 
-const SCard = styled(Card)`
+const SPlantCard = styled.div`
+  /* background: ${({ theme }) => theme.bg3}; */
+  width: 200px;
+  /* height: 300px; */
   display: flex;
-  /* padding: 1rem; */
   flex-direction: column;
   gap: 0.2rem;
-  background-color: ${({ theme }) => theme.bg};
-  transition: translate ease-in 200ms, box-shadow ease-in-out 200ms;
-
-  :hover,
-  :focus {
-    /* translate: 2px -5px ; */
-    scale: 1.05;
-    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  .imgContiner {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    /* margin-bottom: ${v.smSpacing}; */
+  }
+  .block {
+    display: flex;
+    flex-direction: column;
+    /* border: 1px solid black; */
+    height: 100%;
+    padding: 0.2rem;
+    .name {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  }
+  .actionBTN {
+    /* justify-self: flex-end; */
+    font-size: 22px;
+    background-color: ${({ theme }) => theme.primary};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* gap: 1rem; */
+    a {
+      width: 100%;
+      text-decoration: none;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.4rem;
+    }
   }
 `;
 

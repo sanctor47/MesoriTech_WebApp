@@ -34,30 +34,9 @@ const Sidebar = ({ sidebarOpen }) => {
 
   return (
     <SSidebar isOpen={sidebarOpen}>
-      {/* <>
-        <SSidebarButton
-          isOpen={sidebarOpen}
-          onClick={() => setSidebarOpen((p) => !p)}
-        >
-          <AiOutlineLeft />
-        </SSidebarButton>
-      </> */}
       <SLogo>
         <img src={logo_raw} alt="logo" />{" "}
       </SLogo>
-      {/* <SSearch
-        onClick={searchClickHandler}
-        style={!sidebarOpen ? { width: `fit-content` } : {}}
-      >
-        <SSearchIcon>
-          <AiOutlineSearch />
-        </SSearchIcon>
-        <input
-          ref={searchRef}
-          placeholder="Search"
-          style={!sidebarOpen ? { width: 0, padding: 0 } : {}}
-        />
-      </SSearch> */}
       <SDivider />
       {linksArray.map(({ icon, label, notification, to }) => (
         <SLinkContainer key={label} isActive={pathname === to}>
@@ -151,7 +130,7 @@ const SSidebar = styled.div`
   padding: ${v.lgSpacing};
   position: relative;
 
-  transition: all ease-in 1;
+  transition: all ease-in-out 100ms;
 `;
 
 const SSidebarButton = styled.button`

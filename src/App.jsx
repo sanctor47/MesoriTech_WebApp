@@ -13,6 +13,8 @@ import SignupPage from "./pages/SignupPage";
 import Device from "./pages/Device";
 import Plant from "./pages/Plant";
 import Feild from "./pages/Feild";
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 
 const RouteGaurd = () => {
   const auth = localStorage.getItem("token");

@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { getAllFeilds, NewField } from "../../services/Feilds.services";
 import FieldReport from "./FieldReport";
 import { FiLogIn } from "react-icons/fi";
+import { Spinner } from "react-bootstrap";
 
 
 const Feilds = () => {
@@ -110,7 +111,8 @@ const Feilds = () => {
               );
             })
           ) : (
-            <h1>No Feilds</h1>
+
+            <SSpinner />
           )}
         </FeildsList>
         {/* <FieldReport data={activeFeild} /> */}
@@ -121,6 +123,15 @@ const Feilds = () => {
 };
 
 export default Feilds;
+
+const SSpinner = styled(Spinner)`
+  /* border: 1px solid black; */
+  width: 400px;
+  height: 400px;
+  font-size: 80px;
+  /* display: flex; */
+  margin-top: 10rem;
+`
 
 const AddFeildFrom = styled.div`
   /* display: block; */
@@ -187,8 +198,11 @@ const Container = styled.div`
 const FeildsList = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   flex: 1;
   gap: 0.5rem;
+  /* height: 100%; */
 `;
 
 const MapView = styled.div`

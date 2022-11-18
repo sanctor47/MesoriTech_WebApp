@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Layout from "../../components/Layout";
 import { useParams } from "react-router-dom";
 import { getPlantById } from "../../services/Plants.services";
+import { Container } from "react-bootstrap";
 const Plant = () => {
   const [plant, setPlant] = useState();
   const params = useParams();
@@ -124,12 +125,12 @@ const SParamsTable = styled.div`
   }
 `;
 
-const Container = styled.div`
-  /* width: 100%; */
-  .paramsArea {
-    display: flex;
-  }
-`;
+// const Container = styled.div`
+//   /* width: 100%; */
+//   .paramsArea {
+//     display: flex;
+//   }
+// `;
 
 const InfoCard = styled.div`
   display: flex;

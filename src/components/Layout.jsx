@@ -3,6 +3,8 @@ import Appbar from "./Appbar";
 import Sidebar from "./Sidebar";
 import { v } from "../styles/variables";
 import { useState } from "react";
+// import { Container } from "react-bootstrap";
+
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -13,13 +15,13 @@ const Layout = ({ children }) => {
   }
 
   return (
-    <SLayout>
+    <SContainer>
       <Sidebar sidebarOpen={sidebarOpen} />
       <SMain>
         <Appbar sidebarControl={toggleSidebar}/>
         {children}
       </SMain>
-    </SLayout>
+    </SContainer>
   );
 };
 
@@ -42,10 +44,12 @@ export const SMain = styled.main`
   }
 `;
 
-const Container = styled.div`
+const SContainer = styled.div`
   /* box-sizing: border-box; */
   display: flex;
-  position: relative;
+  width: 100%;
+  /* border:1px solid black; */
+  /* position: relative; */
   /* border: 1px solid black; */
   gap: 0.5rem;
   /* height: 100vh; */

@@ -1,22 +1,19 @@
 import styled from "styled-components";
 import { FaBars, FaBell } from "react-icons/fa";
 import { FiSettings, FiMail } from "react-icons/fi";
-import { ThemeContext } from "../App";
 import { v } from "../styles/variables";
-import { useContext } from "react";
 
 const Appbar = ({ sidebarControl }) => {
-  //   const { collapseSidebar } = useProSidebar();
-  const { setTheme, theme } = useContext(ThemeContext);
   const user = JSON.parse(localStorage.getItem("user"));
-  // console.log(user)
   return (
-    <Container>
+    <SContainer>
       <div className="right">
         <NavExpander onClick={sidebarControl}>
           <FaBars />
         </NavExpander>
-        <Text>Hello, {user.firstName} {user.lastName}</Text>
+        <Text>
+          Hello, {user.firstName} {user.lastName}
+        </Text>
       </div>
       <div className="left">
         <ActionArea>
@@ -25,30 +22,33 @@ const Appbar = ({ sidebarControl }) => {
           <FiSettings />
         </ActionArea>
       </div>
-    </Container>
+    </SContainer>
   );
 };
 
 export default Appbar;
 
-const Container = styled.div`
+const SContainer = styled.div`
   padding: ${v.lgSpacing};
   background: ${({ theme }) => theme.bg};
-  position: relative;
   height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   .right {
+    height: 60px;
+    width: 100%;
     display: flex;
-    justify-content: center;
     align-items: center;
     gap: 0.5em;
   }
 
   .left {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
   }
-  `;
+`;
 
 const NavExpander = styled.div`
   display: flex;
@@ -56,16 +56,13 @@ const NavExpander = styled.div`
   align-items: center;
   height: 100%;
   font-size: 28px;
-  /* border: 1px solid black; */
 `;
 
 const Text = styled.div`
-    /* background-color: aliceblue; */
-    font-size: 28px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* border: 1px solid black; */
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const ActionArea = styled.div`
@@ -73,9 +70,3 @@ const ActionArea = styled.div`
   display: flex;
   gap: 0.8rem;
 `;
-
-// const Text = styled.p(
-//     ({ theme }) => `
-//       color: ${theme.colors.primary};
-//     `
-//   )

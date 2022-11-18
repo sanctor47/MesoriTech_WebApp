@@ -7,6 +7,8 @@ import DeviceCard from "./DeviceCard";
 import { getAllDevices, newDevice } from "../../services/Devices.services";
 import { FaPlusCircle } from "react-icons/fa";
 import { getAllFeilds } from "../../services/Feilds.services";
+import NewDeviceForm from "./NewDeviceForm";
+import { Offcanvas } from "react-bootstrap";
 
 const Devices = () => {
   const [devices, setDevices] = useState([]);
@@ -15,6 +17,10 @@ const Devices = () => {
   const [newDeviceLabel, setNewDeviceLabel] = useState();
   const [newDeviceFeild, setNewDeviceFeild] = useState();
   const [listOfFeilds, setListOfFeilds] = useState([]);
+  const [showCanvas, setShowCanvas] = useState(false);
+
+  const handleClose = () => setShowCanvas(false);
+  const handleShow = () => setShowCanvas(true);
 
   const GetAllFeilds = async () => {
     try {
@@ -74,47 +80,21 @@ const Devices = () => {
             </SSearchIcon>
             <input placeholder="Search" />
           </SSearch>
-          <AddDeviceButton onClick={() => setOpenForm(true)}>
+          <AddDeviceButton onClick={handleShow}>
             <div className="CTAText">Add Device</div>
             <div className="icon">
               <FaPlusCircle />
             </div>
           </AddDeviceButton>
         </FilterBar>
-        <AddDeviceFrom show={openForm}>
-          {/* <h1>Add New Device</h1> */}
-          <form onSubmit={(e) => addDevice(e)}>
-            <label htmlFor="name">Name</label>
-            <div className="inputGroup">
-              <input
-                type="text"
-                placeholder="Enter Device Name"
-                onChange={(e) => setNewDeviceName(e.target.value)}
-                value={newDeviceName}
-                required
-              />
-            </div>
-            <label htmlFor="name">Label</label>
-            <div className="inputGroup">
-              <input
-                type="text"
-                required
-                value={newDeviceLabel}
-                placeholder="Enter Device Label"
-                onChange={(e) => setNewDeviceLabel(e.target.value)}
-              />
-            </div>
-            <div className="inputGroup">
-              <select onChange={(e) => setNewDeviceFeild(e.target.value)}>
-                <option value="none">Assign Later</option>
-                {listOfFeilds.map((feild) => {
-                  return <option value={feild._id}>{feild.name}</option>;
-                })}
-              </select>
-            </div>
-            <button type="submit">Add Device</button>
-          </form>
-        </AddDeviceFrom>
+        <Offcanvas placement={"end"} show={showCanvas} onHide={handleClose}>
+          <Offcanvas.Header closeButton>
+            <Offcanvas.Title>Add New Device</Offcanvas.Title>
+          </Offcanvas.Header>
+          <Offcanvas.Body>
+            <NewDeviceForm feilds={listOfFeilds}/>
+          </Offcanvas.Body>
+        </Offcanvas>
       </Container>
       <ListView>
         {devices.map((device) => {
@@ -189,8 +169,8 @@ const AddDeviceButton = styled.div`
 
 const ListView = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  /* flex-direction: column; */
+  /* justify-content: center; */
   align-items: center;
   gap: 1rem;
   width: 100%;
