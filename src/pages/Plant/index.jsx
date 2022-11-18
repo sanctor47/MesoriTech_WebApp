@@ -43,10 +43,9 @@ const Plant = () => {
           <div className="soilParams">{JSON.stringify(plant.soilParams)}</div>
           <div className="waterParams">{JSON.stringify(plant.water)}</div> */}
           <div className="paramsArea">
-
-          <ParamsTable title={"Air Parameters"} data={plant.airParams} />
-          <ParamsTable title={"Soil Parameters"} data={plant.soilParams} />
-          <ParamsTable title={"Water Parameters"} data={plant.water} />
+            <ParamsTable title={"Air Parameters"} data={plant.airParams} />
+            <ParamsTable title={"Soil Parameters"} data={plant.soilParams} />
+            <ParamsTable title={"Water Parameters"} data={plant.water} />
           </div>
         </Container>
       )}
@@ -61,7 +60,7 @@ const ParamsTable = ({ title, data }) => {
   console.log("Parmas Data: ", Object.keys(data.params));
 
   return (
-    <>
+    <SParamsTable>
       <h1>{title}</h1>
       <table>
         <thead>
@@ -90,13 +89,44 @@ const ParamsTable = ({ title, data }) => {
           </tr> */}
         </tbody>
       </table>
-    </>
+    </SParamsTable>
   );
 };
 
+const SParamsTable = styled.div`
+  width: 100%;
+  table {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+
+    td,
+    th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #ddd;
+    }
+
+    th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #04aa6d;
+      color: white;
+    }
+  }
+`;
+
 const Container = styled.div`
   /* width: 100%; */
-  .paramsArea{
+  .paramsArea {
     display: flex;
   }
 `;
